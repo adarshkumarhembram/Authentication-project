@@ -1,4 +1,5 @@
 require("dotenv").config()
+require("./config/database.js").connect()
 const express = require("express")
 
 const User = require("./model/user")
@@ -10,19 +11,22 @@ app.get("/",(req,res)=>{
     res.send("<h1>Hello from auth system -LCO</h1>")
 })
 
-app.post("/register",(req,res)=>{
-    const {firstname, lastname, email, password} = req.body
+app.post("/register",async (req,res)=>{
+    const {firstname, lastname, email, password} = req.body;
+    
+    if (!(email && password && firstname && lastname)) {    
+        res.status(400).send('All fields are required')
+    }
+    
+    const existingUser = await User.findOne({email}); // promise
+
+    if (existingUser) {
+    res.status(401).send('User already exists') 
+    }
+    
 })
 
-if (!(email && password && firstname && lastname)) {
-    res.status(400).send('All fields are required')
-}
 
 
-const existingUser = user.findOne({email});
-
-if (existingUser) {
-    res.status(401).send('User already exists')
-}
 
 module.exports = app;

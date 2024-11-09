@@ -17,9 +17,9 @@ const userSchema = new mongoose.Schema({
         type: String,
     },
     token : {
-        type: string
+        type: String
     }
 
 })
 
-moodule.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('user', userSchema)
