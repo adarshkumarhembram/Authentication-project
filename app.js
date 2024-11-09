@@ -47,6 +47,9 @@ app.post("/register",async (req,res)=>{
     )
     user.token = token
     // update or not
+    // handle password
+    user.password = undefined;
+    
     res.status(201).json(user)
     } catch (error) {
         console.log(error);
