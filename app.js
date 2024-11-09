@@ -58,6 +58,36 @@ app.post("/register",async (req,res)=>{
     
 })
 
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if email and password are provided
+        if (!(email && password)) {
+            return res.status(400).send("Field is missing");  // Send response and stop execution
+        }
+
+        const user = await User.findOne({ email });
+
+        // If the user exists and the password matches
+        if (user && (await bcrypt.compare(password, user.password))) {
+            const token = jwt.sign(
+                { user_id: user._id, email },
+                process.env.SECRET_KEY,
+                { expiresIn: "2h" }
+            );
+            user.token = token;
+            user.password = undefined;  // Hide password from response
+            return res.status(200).json(user);  // Send successful response
+        }
+
+        // If login fails (incorrect email/password)
+        return res.status(400).send("Email or password is incorrect");  // Send error message once
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");  // Send error for unexpected issues
+    }
+});
 
 
 
