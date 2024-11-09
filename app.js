@@ -3,6 +3,8 @@ require("./config/database.js").connect()
 const express = require("express")
 
 const User = require("./model/user")
+const bcrypt = require("bcryptjs")
+const user = require("./model/user")
 
 const app = express();
 app.use(express.json())
@@ -23,6 +25,14 @@ app.post("/register",async (req,res)=>{
     if (existingUser) {
     res.status(401).send('User already exists') 
     }
+
+    const myEncPassword = await bcrypt.hash(password,10)
+    const user = await user.create({
+        firstname,
+        lastname,
+        email: email.toLowerCase(),
+        password: myEncPassword
+    })
     
 })
 
